@@ -1,0 +1,3 @@
+to create 10 refinedCarbon's, you need: {
+  "Carbon": 800
+}

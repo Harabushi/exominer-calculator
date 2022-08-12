@@ -5,8 +5,9 @@
 const fs = require('fs');
 
 const args = process.argv.slice(2);
-let output = '';
-let outputObject = {};
+let componentOutput = {};
+let refinedOutput = {};
+let oresOutput = {};
 
 const ores = [
   "Carbon",
@@ -280,29 +281,39 @@ const components = {
 // 
 
 const build = (item, num ) => {
-  console.log(item);
-  console.log(num);
-  // don't know why I can't get this to work. maybe I need to just code inside the program what to look for
-  console.log(refined.item);
-  if (components.item) {
-    console.log("this is a component");
+  let output = '';
+
+  console.log("Item requested:", item);
+  console.log("Number requested:", num);
+  let production;
+
+  // console.log(refined[item]);
+  // console.log(refined.refinedCarbon);
+  if (components[item]) {
+    // console.log("this is a component");
+    production = components[item];
   };
-  if (refined.item) {
-    console.log("this is a refined ore");
+  if (refined[item]) {
+    // console.log("this is a refined ore");
+    production = refined[item];
   };
 
-  // if (!components.item && !refined.item) {
-  //   return fs.writeFileSync('./output/output.txt', `${item}: ${num}`);
-  // };
+  if (!components[item] && !refined[item]) { 
+    return output += `${num} ${item}'s`
+  };
 
   // I think this is the wrong approach, one item becomes many required and this doesn't account for that
-  // output += `to create ${num} ${item}'s, you need: ${build(components.item)}`;
-  // for (const [key, value] of Object.entries(components.item ? components.item : refined.item)) {
-  //   console.log(`to make ${value} ${key}'s you need`);
-  //   build(key, value);
-  // }
+  console.log(production);
+  output += `to create ${num} ${item}'s, you need: ${ JSON.stringify(production, null, 2) }`;
+  for (const [key, value] of Object.entries(production)) {
+    // console.log(`to make ${value} ${key}'s you need`);
+    if (!components[key] && !refined[key]) {
+      continue;
+    };
+    build(key, value);
+  };
 
-  return fs.writeFileSync('./output/output.txt', output);
+  return output;
 };
 
-build(args[0], args[1]);
+fs.writeFileSync('./output/output.txt', build(args[0], args[1]));
